@@ -1,4 +1,4 @@
-import { tileMap } from "./board.js";
+import { tileMap } from "../scripts/board.js";
 const array_size = 100; //size of the array of moves
 const max_generations = 10; //maximum number of generations
 const population_size = 5; // there will be 5 individuals in the population
