@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pac Man</title>
+  <link rel="stylesheet" href="styles/board.css">
+  
+  <script type="module" src="scripts/board.js"></script>
+    <script type="module" src="scripts/GeneticAlgorithm.js"></script>
+
+  <link rel="icon" type="image/png" href="resources/pacmanRight.png">
+
+</head>
+<body>
+  
+  <header id="game-header">
+    <h1 id="logo">
+        <img src="resources/Pacman.png" alt="Pac-Man" id="logo-img">
+        PAC MAN
+
+    </h1>
+
+    <div id="game-info">
+      <div id="score">SCORE: <span id="score-value">0</span></div>
+      <div id="lives">LIVES: <span id="lives-value">3</span> 
+        <img src="resources/liveHeart.png" id="lives-img">    
+    </div>
+
+    </div>
+
+    <div id="controls">
+      <button id="pause-btn"> Pause</button>
+      <button id="music-btn"> Music</button>
+    </div>
+  </header>
+
+  <main id="game-container">
+    <canvas id="board"></canvas>
+  </main>
+  <!--/div-->
+</body>
+</html>
