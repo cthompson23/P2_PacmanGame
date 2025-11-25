@@ -1,3 +1,5 @@
+import { PacmanMovement } from "./PacManMoves.js";
+
 let board;
 const rowCount = 17;
 const colCount = 19;
@@ -31,7 +33,12 @@ let capLeftImage;
 let capRightImage;
 
 export const tileMap = [
-   
+   //the table is represented as a matrix of characters
+   //the blanck spaces represent food
+   //walls are represented by different characters (depending on the type of image to use)
+   //ghosts are represented by characters: b (blue), o (orange), p (pink), r (red)
+   //pacman is represented by character P
+
     "1-----------------2",
     "|                 |",
     "| LR T L---R T LR |",
@@ -51,18 +58,19 @@ export const tileMap = [
     "4----7-------7----3",
 ];
 
-export const walls = new Set();
-export const foods = new Set();
-export const ghosts = new Set();
-export let pacman;
+export const walls = new Set(); //set of wall cells
+export const foods = new Set(); //set of food cells
+export const ghosts = new Set(); //set of ghost cells
+export let pacman; //pacman cell
 
 window.onload = function() {
     board = document.getElementById("board"); board.height = boardHeight; 
     board.width = boardWidth; 
     context = board.getContext("2d"); //used for drawing on the board
-  loadImages();
-  loadMap();
-  update();
+    loadImages();
+    loadMap();
+    update();
+    PacmanMovement( ['R', 'L', 'R', 'D', 'U', 'R', 'D', 'L', 'U', 'L', 'L', 'D', 'L', 'D', 'R', 'R', 'R', 'R', 'D', 'D', 'D', 'D', 'R', 'U', 'U', 'U', 'R', 'R', 'D', 'U', 'D', 'D', 'U', 'D', 'D', 'D', 'U', 'L', 'R', 'D', 'R', 'D', 'R', 'D', 'R', 'D', 'L', 'L', 'R', 'L', 'R', 'U', 'L', 'D', 'L', 'R', 'R', 'R', 'R', 'D', 'U', 'R', 'L', 'U', 'R', 'L', 'L', 'U', 'L', 'U', 'R', 'U', 'R', 'U', 'L', 'U', 'D', 'D', 'D', 'L', 'L', 'U', 'L', 'D', 'D', 'U', 'L', 'U', 'D', 'D', 'U', 'L', 'U', 'R', 'U', 'U', 'L', 'R', 'U', 'U'])
 };
 
 function loadImages() {
@@ -238,6 +246,7 @@ function draw() {
 
 class Cell {
     constructor(image, x, y, width, height) {
+        //each image is a Cell, they have positions(x,y) and size (width, height)
         this.image = image;
         this.x = x;
         this.y = y;
@@ -245,6 +254,7 @@ class Cell {
         this.height = height;
         this.startX = x;
         this.startY = y;
-
+        
     }
+
 };
