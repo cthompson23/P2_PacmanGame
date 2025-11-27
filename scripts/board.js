@@ -1,5 +1,6 @@
 import { PacmanMovement } from "./PacManMoves.js";
 import { Ghost, updateGhosts } from "./ghosts.js";
+import { initMusic, toggleMusic } from "./music.js";
 
 
 let board;
@@ -72,6 +73,9 @@ window.onload = function() {
      *
      * @returns {void}
      */
+    initMusic();   // inicializa el audio
+    const musicBtn = document.getElementById("music-btn");
+    musicBtn.addEventListener("click", toggleMusic);
 
     board = document.getElementById("board"); board.height = boardHeight; 
     board.width = boardWidth; 
