@@ -27,8 +27,15 @@ class Individual {
   }
   
   fitnessFunction(map, pacmanStart) {
-    /*Calculates the fitness of the individual based on the map 
-    and Pacman's starting position*/
+    /**
+   * Applies fitness penalties related to ghosts, food, movement   
+   *
+   * @param {Array<Array<string>>} map - The tilemap.
+   * @param {number} x - Pac-Man’s updated X coordinate.
+   * @param {number} y - Pac-Man’s updated Y coordinate.
+   * @returns {void}
+   */
+
     let x = pacmanStart.x;
     let y = pacmanStart.y;
     let score = 0;
@@ -73,6 +80,13 @@ class Individual {
       y = newY;
 
       const key = `${x},${y}`;
+      if (this.collisionGhost(map[y][x])) {
+        score -= 200;   // Pac-Man dies — huge punishment
+      }
+      
+      if (this.detectNearbyGhost(map, x, y)) {
+        score -= 20;    // Pac-Man should learn to not get close
+      }
 
       if (visited.has(key)) {
         score -= 50; // revisits the same cell
@@ -98,26 +112,37 @@ class Individual {
    
   }
 
-  /*collisionGhost(cell) {
-    return  ['r', 'g', 'b', 'o'].includes(cell);
-  }
+  
+collisionGhost(cell) {
+  /**
+   * Returns true if Pac-Man is exactly on a ghost tile.
+   *
+   * @param {string} cell - Map char at Pac-Man's position.
+   * @returns {boolean} True if collision with a ghost.
+   */
+  return ['r', 'g', 'b', 'o'].includes(cell);
+}
 
-  detectNearbyGhost(map, x, y) {
-    for (const [dx, dy] of directions) {
-      const nx = x + dx;
-      const ny = y + dy;
+detectNearbyGhost(map, x, y) {
+  /**
+   * Checks surrounding tiles to detect if a ghost is near.
+   *
+   * @param {Array<Array<string>>} map - Game tilemap.
+   * @param {number} x - Pac-Man X position.
+   * @param {number} y - Pac-Man Y position.
+   * @returns {boolean} True if a ghost is in any adjacent tile.
+   */
+  for (const [dx, dy] of directions) {
+    const nx = x + dx;
+    const ny = y + dy;
 
-      if (
-        ny >= 0 &&
-        ny < map.length &&
-        nx >= 0 &&
-        nx < map[0].length &&
-        this.collisionGhost(map[ny][nx])
-      ) {
-        return true;
-      }
+    if (ny >= 0 && ny < map.length && nx >= 0 && nx < map[0].length && this.collisionGhost(map[ny][nx])) {
+      return true;
     }
-  }*/
+  }
+  return false;
+}
+
 
   detectNearbyFood(map, x, y) {
     for (const [dx, dy] of directions) {
@@ -241,6 +266,14 @@ class Population {
 console.log('Array inicial:', inicial_array);
 
 function findPacmanStart(map) {
+  /**
+   * Finds the starting coordinates of Pac-Man in the tile map.
+   * Busca el carácter 'P' en la matriz y devuelve su posición.
+   *
+   * @param {string[][]} map - The tile map matrix where each element is a character.
+   * @returns {{x: number, y: number}} The coordinates { x, y } of Pac-Man's start; returns {x:1, y:1} if not found.
+   */
+
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
       if (map[y][x] === 'P') return { x, y };

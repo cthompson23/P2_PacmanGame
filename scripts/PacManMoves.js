@@ -1,4 +1,5 @@
-import { pacman, tileSize, foods, tileMap } from "./board.js";
+import { pacman, tileSize, foods, tileMap, ghosts } from "./board.js";
+import { killPacman } from "./death.js"; 
 
 export async function PacmanMovement(moves) {
   /**
@@ -30,6 +31,12 @@ export async function PacmanMovement(moves) {
 
         // delete food if present
         eatFoodIfPresent();
+
+        // check ghost collision after movement
+        if (checkGhostCollision()) {          
+            killPacman();
+            return;
+        }
     }
 }
 
@@ -77,4 +84,22 @@ function eatFoodIfPresent() {
       break;
     }
   }
-} 
+}
+
+function checkGhostCollision() {  
+  /**
+   * Checks whether Pac-Man collides with any ghost    
+   *
+   * @returns {boolean} True if Pac-Man touches a ghost; otherwise false.
+   */
+    for (let ghost of ghosts) {
+        const dx = Math.abs(pacman.x - ghost.x);
+        const dy = Math.abs(pacman.y - ghost.y);
+
+        if (dx < tileSize / 2 && dy < tileSize / 2) {
+            return true;
+        }
+    }
+    return false;
+}
+

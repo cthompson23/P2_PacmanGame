@@ -281,6 +281,28 @@ function draw() {
     }
 }
 
+export function resetBoard() {
+    /**
+     * Resets Pac-Man and ghosts to their starting positions and reloads the map.
+     *
+     * @returns {void}
+     */
+    // Reset Pac-Man position
+    pacman.x = pacman.startX;
+    pacman.y = pacman.startY;
+
+    // Reset ghosts
+    for (let g of ghosts) {
+        g.x = g.startX;
+        g.y = g.startY;
+        g.direction = g.randomDirection();
+    }
+    // Reload map & redraw
+    loadMap();
+    update();
+}
+
+
 class Cell {
     /**
      * Drawable object on the board(walls, food, or characters)
