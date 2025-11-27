@@ -24,7 +24,13 @@ let capLeftImage;
 let capRightImage;
 
 export function loadImages() {
-    /* Load all images */
+    /**
+     * Loads all sprite images required to render the game elements
+     * (walls, corners, caps, ghosts, and Pac-Man).
+     *
+     * @returns {void}
+     */
+
     //walls
     horizontalWallImage = new Image();
     horizontalWallImage.src = "../resources/horizontalWall.png";
@@ -76,6 +82,12 @@ export function loadImages() {
 }
 
 export function loadMap() {
+    /**
+     * Init wall cells, foods, ghosts and Pac-Man 
+     *
+     * @returns {void}
+     */
+
     walls.clear();
     foods.clear();
     ghosts.clear();

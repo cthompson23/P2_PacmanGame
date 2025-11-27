@@ -1,4 +1,6 @@
 import { PacmanMovement } from "./PacManMoves.js";
+import { Ghost, updateGhosts } from "./ghosts.js";
+
 
 let board;
 const rowCount = 17;
@@ -64,6 +66,13 @@ export const ghosts = new Set(); //set of ghost cells
 export let pacman; //pacman cell
 
 window.onload = function() {
+    /**
+     * Initializes the game once the window is fully loaded.
+     * Configures the canvas, loads images, builds the map and starts the update loop.
+     *
+     * @returns {void}
+     */
+
     board = document.getElementById("board"); board.height = boardHeight; 
     board.width = boardWidth; 
     context = board.getContext("2d"); //used for drawing on the board
@@ -74,7 +83,12 @@ window.onload = function() {
 };
 
 function loadImages() {
-    /* Load all images */
+    /**
+     * Loads all graphical assets (walls, corners, caps, ghosts, and Pac-Man sprites).
+     *
+     * @returns {void}
+     */
+    
     //walls
     horizontalWallImage = new Image();
     horizontalWallImage.src = "../resources/horizontalWall.png";
@@ -126,6 +140,12 @@ function loadImages() {
 }
 
 function loadMap() {
+    /**
+     * Loads the tile map and initializes walls, foods, ghosts, and Pac-Man positions.
+     *
+     * @returns {void}
+     */
+
     walls.clear();
     foods.clear();
     ghosts.clear();
@@ -195,19 +215,19 @@ function loadMap() {
                 walls.add(wall);
             }
             else if (tileMapChar == 'b') { //blue ghost
-                const ghost = new Cell(blueGhostImage, x, y, tileSize, tileSize);
+                const ghost = new Ghost(blueGhostImage, x, y);
                 ghosts.add(ghost);
             }
             else if (tileMapChar == 'o') { //orange ghost
-                const ghost = new Cell(orangeGhostImage, x, y, tileSize, tileSize);
+                const ghost = new Ghost(orangeGhostImage, x, y);
                 ghosts.add(ghost);
             }
             else if (tileMapChar == 'p') { //pink ghost
-                const ghost = new Cell(pinkGhostImage, x, y, tileSize, tileSize);
+                const ghost = new Ghost(pinkGhostImage, x, y);
                 ghosts.add(ghost);
             }
             else if (tileMapChar == 'r') { //red ghost
-                const ghost = new Cell(redGhostImage, x, y, tileSize, tileSize);
+                const ghost = new Ghost(redGhostImage, x, y);
                 ghosts.add(ghost);
             }
             else if (tileMapChar == 'P') { //pacman
@@ -222,11 +242,24 @@ function loadMap() {
 }
 
 function update() {
+    /**
+     * Main update loop that refreshes the game state and triggers rendering.
+     *
+     * @returns {void}
+     */
+
+    updateGhosts();
     draw();
     setTimeout(update, 50); 
 }
 
 function draw() {
+    /**
+     * Renders all game elements onto the canvas, including Pac-Man, ghosts,walls, and food pellets.     
+     *
+     * @returns {void}
+     */
+
     context.clearRect(0, 0, boardWidth, boardHeight);
     context.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height);
     
@@ -245,6 +278,16 @@ function draw() {
 }
 
 class Cell {
+    /**
+     * Drawable object on the board(walls, food, or characters)
+     *
+     * @param {HTMLImageElement|null} image - The sprite image or null (for food).
+     * @param {number} x - X-coordinate in pixels.
+     * @param {number} y - Y-coordinate in pixels.
+     * @param {number} width - Width of the element in pixels.
+     * @param {number} height - Height of the element in pixels.
+     */
+
     constructor(image, x, y, width, height) {
         //each image is a Cell, they have positions(x,y) and size (width, height)
         this.image = image;
