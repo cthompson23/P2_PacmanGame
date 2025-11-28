@@ -1,6 +1,7 @@
 import { PacmanMovement } from "./PacManMoves.js";
 import { Ghost, updateGhosts } from "./ghosts.js";
 import { initMusic, toggleMusic } from "./music.js";
+import { runAG } from "../algorithm/GeneticAlgorithm.js";
 
 
 let board;
@@ -83,7 +84,7 @@ window.onload = function() {
     loadImages();
     loadMap();
     update();
-    PacmanMovement( ['R', 'L', 'R', 'D', 'U', 'R', 'D', 'L', 'U', 'L', 'L', 'D', 'L', 'D', 'R', 'R', 'R', 'R', 'D', 'D', 'D', 'D', 'R', 'U', 'U', 'U', 'R', 'R', 'D', 'U', 'D', 'D', 'U', 'D', 'D', 'D', 'U', 'L', 'R', 'D', 'R', 'D', 'R', 'D', 'R', 'D', 'L', 'L', 'R', 'L', 'R', 'U', 'L', 'D', 'L', 'R', 'R', 'R', 'R', 'D', 'U', 'R', 'L', 'U', 'R', 'L', 'L', 'U', 'L', 'U', 'R', 'U', 'R', 'U', 'L', 'U', 'D', 'D', 'D', 'L', 'L', 'U', 'L', 'D', 'D', 'U', 'L', 'U', 'D', 'D', 'U', 'L', 'U', 'R', 'U', 'U', 'L', 'R', 'U', 'U'])
+    //PacmanMovement( ['R', 'L', 'R', 'D', 'U', 'R', 'D', 'L', 'U', 'L', 'L', 'D', 'L', 'D', 'R', 'R', 'R', 'R', 'D', 'D', 'D', 'D', 'R', 'U', 'U', 'U', 'R', 'R', 'D', 'U', 'D', 'D', 'U', 'D', 'D', 'D', 'U', 'L', 'R', 'D', 'R', 'D', 'R', 'D', 'R', 'D', 'L', 'L', 'R', 'L', 'R', 'U', 'L', 'D', 'L', 'R', 'R', 'R', 'R', 'D', 'U', 'R', 'L', 'U', 'R', 'L', 'L', 'U', 'L', 'U', 'R', 'U', 'R', 'U', 'L', 'U', 'D', 'D', 'D', 'L', 'L', 'U', 'L', 'D', 'D', 'U', 'L', 'U', 'D', 'D', 'U', 'L', 'U', 'R', 'U', 'U', 'L', 'R', 'U', 'U'])    
 };
 
 function loadImages() {
@@ -236,6 +237,10 @@ function loadMap() {
             }
             else if (tileMapChar == 'P') { //pacman
                 pacman = new Cell(pacmanRightImage, x, y, tileSize, tileSize);
+                // Ejecutar AG 
+                const bestChrom = runAG(tileMap);                                
+                PacmanMovement(bestChrom);
+
             }
             else if (tileMapChar == ' ') { //empty is food
                 const food = new Cell(null, x + 14, y + 14, 4, 4);

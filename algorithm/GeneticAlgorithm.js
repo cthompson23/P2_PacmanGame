@@ -81,7 +81,7 @@ class Individual {
 
       const key = `${x},${y}`;
       if (this.collisionGhost(map[y][x])) {
-        score -= 200;   // Pac-Man dies — huge punishment
+        score -= 50;   // Pac-Man dies — huge punishment
       }
       
       if (this.detectNearbyGhost(map, x, y)) {
@@ -282,36 +282,37 @@ function findPacmanStart(map) {
   return { x: 1, y: 1 };
 }
 
-const pacmanStart = findPacmanStart(tileMap);
-const population = new Population(inicial_array, population_size);
+export function runAG() {
 
-population.evaluateAll(tileMap, pacmanStart);
+  const pacmanStart = findPacmanStart(tileMap);
+  const population = new Population(inicial_array, population_size);
 
-console.log(" Generación 0");
-console.log(population.toString());
-console.log("Cromosomas iniciales:", population.toArrayPopu());
-
-for (let gen = 1; gen <= max_generations; gen++) {
-
-  // Crear nueva generación
-  population.newGeneraton();
-
-  // Re-evaluar fitness
   population.evaluateAll(tileMap, pacmanStart);
 
-  console.log(`GENERACIÓN ${gen} `);
+  console.log(" Generación 0");
   console.log(population.toString());
+  console.log("Cromosomas iniciales:", population.toArrayPopu());
+
+  for (let gen = 1; gen <= max_generations; gen++) {
+    // Crear nueva generación
+    population.newGeneraton();
+    // Re-evaluar fitness
+    population.evaluateAll(tileMap, pacmanStart);
+    console.log(`GENERACIÓN ${gen} `);
+    console.log(population.toString());
+  }
+
+  console.log("Resultados de fitness:");
+  console.log(population.toString());
+  console.log(population.toStringPopu());
+  console.log(population.toArrayPopu());
+  const bestFinalInd = population.population.reduce((best, current) =>
+    current.fitness > best.fitness ? current : best
+  );
+
+  console.log(" MEJOR INDIVIDUO FINAL");
+  console.log("Fitness:", bestFinalInd.fitness);
+  console.log("Cromosoma:", bestFinalInd.cromosoma);
+  // Saves the BEST genes found
+  return bestFinalInd.cromosoma;
 }
-
-console.log("Resultados de fitness:");
-console.log(population.toString());
-console.log(population.toStringPopu());
-console.log(population.toArrayPopu());
-const bestFinalInd = population.population.reduce((best, current) =>
-  current.fitness > best.fitness ? current : best
-);
-
-console.log(" MEJOR INDIVIDUO FINAL");
-console.log("Fitness:", bestFinalInd.fitness);
-console.log("Cromosoma:", bestFinalInd.cromosoma);
-
