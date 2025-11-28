@@ -1,5 +1,6 @@
 import { pacman, tileSize, foods, tileMap, ghosts } from "./board.js";
 import { killPacman } from "./death.js"; 
+import { activateWeakMode } from "./ghosts.js";
 
 export async function PacmanMovement(moves) {
   /**
@@ -79,10 +80,16 @@ function eatFoodIfPresent() {
    */
 
   for (let food of foods) {
-    if (food.x === pacman.x + 14 && food.y === pacman.y + 14) {
-      foods.delete(food);
-      increaseScore(10); 
-      break;
+    if (food.x === pacman.x + 14 && food.y === pacman.y + 14) {       
+        if (food.isSuper) {
+            increaseScore(50);     
+            activateWeakMode();    
+        }            
+        else {
+            increaseScore(10);
+        }
+        foods.delete(food);
+        break;
     }
   }
 }
@@ -124,7 +131,10 @@ function checkGhostCollision() {
         const overlapX = pacLeft < ghostRight && pacRight > ghostLeft;
         const overlapY = pacTop < ghostBottom && pacBottom > ghostTop;
 
-        if (overlapX && overlapY) {
+       if (overlapX && overlapY) {            
+            if (ghost.weak) {
+                return false;
+            }            
             return true;
         }
     }

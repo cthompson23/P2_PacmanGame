@@ -61,15 +61,7 @@ class Individual {
         score -= 10; // moves into wall 
         console.log(score);
         continue;
-      }
-
-      /*if (this.detectNearbyGhost(map, x, y)) {
-        score -= 10;
-      }
-
-      if (this.collisionGhost(map[newX][newY])) {
-        score -= 50;
-      }*/
+      }      
 
       if (this.detectNearbyFood(map, x, y)){
         score += 10; // moves closer to food
@@ -82,7 +74,7 @@ class Individual {
       const key = `${x},${y}`;
       if (this.collisionGhost(map[y][x])) {
         score -= 50;   // Pac-Man dies — huge punishment
-      }
+      }        
       
       if (this.detectNearbyGhost(map, x, y)) {
         score -= 20;    // Pac-Man should learn to not get close
@@ -93,11 +85,15 @@ class Individual {
         visited.add(key);
       } else {
         visited.add(key);
-        score += 20; //first time in this cell
+        score += 20; //first time in this cell        
         
+        if (map[y][x] === 'S') {
+            score += 40; // moves to superfood
+            console.log(score);        
+        }
         if (map[y][x] === ' ') {
-          score += 30; // moves to food
-          console.log(score);
+            score += 30; // moves to food
+            console.log(score);        
         } else {
           score -= 15; // moves to empty space
           console.log(score);
@@ -283,7 +279,11 @@ function findPacmanStart(map) {
 }
 
 export function runAG() {
-
+  /**
+   * Runs the algorith   
+   *   
+   * @returns {bestFinalInd} Set of the best genes 
+   */
   const pacmanStart = findPacmanStart(tileMap);
   const population = new Population(inicial_array, population_size);
 

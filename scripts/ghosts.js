@@ -1,5 +1,5 @@
 import { pacman, tileMap, tileSize, ghosts as ghostSet } from "./board.js";
-
+import { increaseScore } from "./PacManMoves.js";
 
 export class Ghost {
     /**
@@ -42,8 +42,6 @@ export class Ghost {
     }
 }
 
-
-
 function cols() {
     /**
      * Determines number of columns in the tileMap.
@@ -52,7 +50,6 @@ function cols() {
      */
     return tileMap[0]?.length ?? 0;
 }
-
 
 function rows() {
     /**
@@ -167,7 +164,6 @@ function moveGhostPixel(ghost) {
     }
 }
 
-
 function applyTeleportation(ghost) {
     /**
      * Teleports a ghost from one side of the tunnel to the opposite side if required.
@@ -263,3 +259,74 @@ export function updateGhosts() {
         updateGhost(ghost);
     }
 }
+
+export function activateWeakMode() {
+    /**
+     * Sets all ghosts to weak mode for 7 seconds 
+     *
+     * @returns {void}
+     */
+
+    console.log("Ghosts are now WEAK!");
+    const scaredImg = new Image();
+    scaredImg.src = "../resources/scaredGhost.png";
+
+    for (let g of ghostSet) {
+        g.weak = true;        
+        if (!g.originalImage) {
+            g.originalImage = g.image;
+        }
+        g.image = scaredImg;
+    }
+
+    // restore after 7 seconds
+    setTimeout(() => {
+        console.log("Weak mode ended.");
+        for (let g of ghostSet) {
+            g.weak = false;
+            g.image = g.originalImage;
+        }
+    }, 30000);
+}
+
+// export function killGhost(ghost) {
+    
+//     /**
+//      * Respawns the ghost in its ORIGINAL location     
+//      *
+//      * @param {Ghost} ghost - The ghost to respawn.
+//      * @returns {void}
+//      */    
+//     increaseScore(50);
+
+//     let originX = 0;
+//     let originY = 0;
+
+//     for (let row = 0; row < tileMap.length; row++) {
+//         const colIndex = tileMap[row].indexOf(ghost.symbol);
+//         if (colIndex !== -1) {
+//             originX = colIndex * tileSize;
+//             originY = row * tileSize;
+//             break;
+//         }
+//     }
+
+//     // Move ghost back to original spawn
+//     ghost.x = originX;
+//     ghost.y = originY;
+
+//     // Blink for 3 seconds
+//     ghost.visible = true;
+//     let toggle = true;
+
+//     const interval = setInterval(() => {
+//         toggle = !toggle;
+//         ghost.visible = toggle;
+//     }, 200);
+
+//     setTimeout(() => {
+//         clearInterval(interval);
+//         ghost.visible = true;
+//     }, 3000);
+// }
+

@@ -2,6 +2,7 @@ import { PacmanMovement } from "./PacManMoves.js";
 import { Ghost, updateGhosts } from "./ghosts.js";
 import { initMusic, toggleMusic } from "./music.js";
 import { runAG } from "../algorithm/GeneticAlgorithm.js";
+import { createSuperPill } from "./superpowers.js";
 
 
 let board;
@@ -44,21 +45,21 @@ export const tileMap = [
    //pacman is represented by character P
 
     "1-----------------2",
-    "|                 |",
-    "| LR T L---R T LR |",
-    "|    |       |    |",
-    "4--2 6--R L--5 1--3",
-    "OOO| |       | |OOO",
-    "---3 B LRrLR B 4---",
-    "O       bpo       O",
-    "---2 T L---R T 1---",
+    "|*****************|",
+    "|*LR*T*L---R*T*LR*|",
+    "|****|*******|****|",
+    "4--2*6--R*L--5*1--3",
+    "OOO|*|*******|*|OOO",
+    "---3*B*LRrLR*B*4---",
+    "O*******bpo*******O",
+    "---2*T*L---R*T*1---",
     "OOO| |       | |OOO",
     "1--3 B L-8-R B 4--2",
-    "|        |        |",
-    "| L2 L-R B L-R 1R |",
-    "|  |     P     |  |",
-    "6R B T  L-R  T B L5",
-    "|    |       |    |",
+    "|***     |     ***|",
+    "|*L2 L-R B L-R 1R*|",
+    "|**|     P     |**|",
+    "6R*B*T  L-R  T*B*L5",
+    "|****|*******|****|",
     "4----7-------7----3",
 ];
 
@@ -83,6 +84,7 @@ window.onload = function() {
     context = board.getContext("2d"); //used for drawing on the board
     loadImages();
     loadMap();
+    createSuperPill();
     update();
     //PacmanMovement( ['R', 'L', 'R', 'D', 'U', 'R', 'D', 'L', 'U', 'L', 'L', 'D', 'L', 'D', 'R', 'R', 'R', 'R', 'D', 'D', 'D', 'D', 'R', 'U', 'U', 'U', 'R', 'R', 'D', 'U', 'D', 'D', 'U', 'D', 'D', 'D', 'U', 'L', 'R', 'D', 'R', 'D', 'R', 'D', 'R', 'D', 'L', 'L', 'R', 'L', 'R', 'U', 'L', 'D', 'L', 'R', 'R', 'R', 'R', 'D', 'U', 'R', 'L', 'U', 'R', 'L', 'L', 'U', 'L', 'U', 'R', 'U', 'R', 'U', 'L', 'U', 'D', 'D', 'D', 'L', 'L', 'U', 'L', 'D', 'D', 'U', 'L', 'U', 'D', 'D', 'U', 'L', 'U', 'R', 'U', 'U', 'L', 'R', 'U', 'U'])    
 };
@@ -244,7 +246,7 @@ function loadMap() {
             }
             else if (tileMapChar == ' ') { //empty is food
                 const food = new Cell(null, x + 14, y + 14, 4, 4);
-                foods.add(food);
+                foods.add(food);                
             }
         }
     }
@@ -279,10 +281,15 @@ function draw() {
     for (let wall of walls.values()) {
         context.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height);
     }
-
-    context.fillStyle = "white";
+    
     for (let food of foods.values()) {
-        context.fillRect(food.x, food.y, food.width, food.height);
+        if (food.isSuper) {// comida especial
+            context.fillStyle = "red";            
+            context.fillRect(food.x, food.y, food.width, food.height);
+        } else { // comida normal            
+            context.fillStyle = "white";            
+            context.fillRect(food.x, food.y, food.width, food.height);
+        }        
     }
 }
 
@@ -304,6 +311,7 @@ export function resetBoard() {
     }
     // Reload map & redraw
     loadMap();
+    createSuperPill();
     update();
 }
 
@@ -330,5 +338,16 @@ class Cell {
         this.startY = y;
         
     }
+    isSuperFoodAt(map, x, y) {
+    for (let food of foods) {
+        if (food.isSuper && 
+            Math.floor(food.x / tileSize) === x &&
+            Math.floor(food.y / tileSize) === y) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 };
