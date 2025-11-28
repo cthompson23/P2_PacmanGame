@@ -1,0 +1,24 @@
+To run this code you will need to use a local Server.
+Given that google blocks cross origin requests.
+
+1. Install python: https://www.python.org/downloads/
+2. Add Python to PATH
+3. Open the terminal al position yourself on the project directory, then run
+    python -m http.server 8000 
+
+4. And then open http://localhost:8000
+To stop hosting user Ctrol + C in terminal
+
+Or
+
+Using NodeJS it should work too, 
+1. By dowloading NodeJS on https://nodejs.org/ and Check installation with
+    node --version
+    npm --version
+
+2. Install local server and execute
+    npm install -g http-server
+    npx http-server
+
+then open in browser http://localhost:8080/
+    

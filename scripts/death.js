@@ -32,10 +32,10 @@ export function killPacman() {
 
 export function gameOver() {
     /**
-     * Displays the Game Over screen and returns to the start window.     
+     * Displays the Game Over screen with the final score 
      *
      * @returns {void}
-     */    
+     */
     const overlay = document.createElement("div");
     overlay.id = "game-over-overlay";
 
@@ -48,12 +48,34 @@ export function gameOver() {
         backgroundImage: "url('../resources/gameOverScreen.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        zIndex: "9999"
+        zIndex: "9999",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        color: "white",
+        fontFamily: "'Press Start 2P', sans-serif",
+        textShadow: "3px 3px 5px black"
     });
-
+    
     document.body.appendChild(overlay);
 
+    const scoreValue = document.getElementById("score-value").textContent;
+    const scoreLabel = document.createElement("div");
+    scoreLabel.textContent = `FINAL SCORE: ${scoreValue}`;
+    
+    Object.assign(scoreLabel.style, {
+        fontSize: "48px",
+        marginTop: "20px",
+        background: "rgba(0,0,0,0.4)",
+        padding: "20px 40px",
+        borderRadius: "10px"
+    });
+
+    overlay.appendChild(scoreLabel);
+    
     setTimeout(() => {
         window.location.href = "../StartWindow.html";
     }, 3000);
 }
+

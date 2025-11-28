@@ -81,25 +81,55 @@ function eatFoodIfPresent() {
   for (let food of foods) {
     if (food.x === pacman.x + 14 && food.y === pacman.y + 14) {
       foods.delete(food);
+      increaseScore(10); 
       break;
     }
   }
 }
 
-function checkGhostCollision() {  
-  /**
-   * Checks whether Pac-Man collides with any ghost    
-   *
-   * @returns {boolean} True if Pac-Man touches a ghost; otherwise false.
-   */
-    for (let ghost of ghosts) {
-        const dx = Math.abs(pacman.x - ghost.x);
-        const dy = Math.abs(pacman.y - ghost.y);
+export function increaseScore(amount) {
+    /**
+     * Adds points to the global score and updates the DOM.
+     *
+     * @param {number} amount - Points to add.
+     * @returns {void}
+     */
 
-        if (dx < tileSize / 2 && dy < tileSize / 2) {
+    const scoreSpan = document.getElementById("score-value");
+    let current = parseInt(scoreSpan.textContent);
+
+    current += amount;
+    scoreSpan.textContent = current;
+}
+
+
+function checkGhostCollision() {
+    /**
+     * Checks whether Pac-Man collides with any ghost using AABB collision.
+     *
+     * @returns {boolean} True if Pac-Man overlaps a ghost; otherwise false.
+     */
+    for (let ghost of ghosts) {
+
+        const pacLeft   = pacman.x;
+        const pacRight  = pacman.x + tileSize;
+        const pacTop    = pacman.y;
+        const pacBottom = pacman.y + tileSize;
+
+        const ghostLeft   = ghost.x;
+        const ghostRight  = ghost.x + tileSize;
+        const ghostTop    = ghost.y;
+        const ghostBottom = ghost.y + tileSize;
+
+        const overlapX = pacLeft < ghostRight && pacRight > ghostLeft;
+        const overlapY = pacTop < ghostBottom && pacBottom > ghostTop;
+
+        if (overlapX && overlapY) {
             return true;
         }
     }
+
     return false;
 }
+
 
