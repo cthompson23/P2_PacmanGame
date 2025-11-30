@@ -1,5 +1,8 @@
-import { pacman, tileMap, tileSize, ghosts as ghostSet } from "./board.js";
+import { pacman, tileMap, tileSize, ghosts as ghostSet, ghosts } from "./board.js";
 import { increaseScore } from "./PacManMoves.js";
+
+const eatGhostSound = new Audio("../resources/eatGhost.mp3");
+
 
 export class Ghost {
     /**
@@ -11,12 +14,15 @@ export class Ghost {
      * @param {boolean} [weak=false] - Indicates whether the ghost is weak (edible by Pac-Man).
      */
     constructor(image, x, y, weak = false) {
-        this.image = image;       
+        this.image = image;  
+        this.baseImage = image;     
         this.x = Math.floor(x);
         this.y = Math.floor(y);
         this.width = tileSize;
         this.height = tileSize;
 
+        this.visible = true; 
+        this.speedFactor = 1;  
         this.weak = weak;
         this.direction = this.randomDirection();        
         this.speed = this.randomSpeed();
@@ -289,44 +295,73 @@ export function activateWeakMode() {
     }, 30000);
 }
 
-// export function killGhost(ghost) {
+export function findRespawnPoint() {
+    /**
+     * Finds the respawn coordinates for ghosts after killed
+     * always respawn where pinkGhost init position was     
+     * @returns {{x: number, y: number}} Coordinates in pixel space      
+     */
+
+    for (let y = 0; y < tileMap.length; y++) {
+        const row = tileMap[y];
+        const col = row.indexOf("p");  
+
+        if (col !== -1) {
+            return {
+                x: col * tileSize,
+                y: y * tileSize
+            };
+        }
+    }
+    return { x: 0, y: 0 };
+}
+
+export function killGhost(ghost) {
     
-//     /**
-//      * Respawns the ghost in its ORIGINAL location     
-//      *
-//      * @param {Ghost} ghost - The ghost to respawn.
-//      * @returns {void}
-//      */    
-//     increaseScore(50);
+    /**
+     * Respawns the ghost in its ORIGINAL location     
+     *
+     * @param {Ghost} ghost - The ghost to respawn.
+     * @returns {void}
+     */    
+    increaseScore(50);
 
-//     let originX = 0;
-//     let originY = 0;
+    eatGhostSound.currentTime = 0;
+    eatGhostSound.play();
+    setTimeout(() => {
+        eatGhostSound.pause();
+        eatGhostSound.currentTime = 0;
+        ghost.visible = false;
+    }, 2000);
 
-//     for (let row = 0; row < tileMap.length; row++) {
-//         const colIndex = tileMap[row].indexOf(ghost.symbol);
-//         if (colIndex !== -1) {
-//             originX = colIndex * tileSize;
-//             originY = row * tileSize;
-//             break;
-//         }
-//     }
+   // hide immediately
+    ghost.visible = false;
+    setTimeout(() => {
+        const spawn = findRespawnPoint();
+        ghost.x = spawn.x;
+        ghost.y = spawn.y;
+        ghost.weak = false;
+        ghost.image = ghost.baseImage;  
+        ghost.visible = true;
 
-//     // Move ghost back to original spawn
-//     ghost.x = originX;
-//     ghost.y = originY;
+        // Blinking (3 seconds)
+        let toggle = true;
+        const blinkInterval = setInterval(() => {
+            toggle = !toggle;
+            ghost.visible = toggle;
+        }, 3000);
 
-//     // Blink for 3 seconds
-//     ghost.visible = true;
-//     let toggle = true;
+        setTimeout(() => {
+            clearInterval(blinkInterval);
+            ghost.visible = true;
+        }, 3000);
 
-//     const interval = setInterval(() => {
-//         toggle = !toggle;
-//         ghost.visible = toggle;
-//     }, 200);
+        // Slow movement for 2 seconds
+        ghost.speedFactor = 0.5;
+        setTimeout(() => {
+            ghost.speed = ghost.speed;
+        }, 2000);
 
-//     setTimeout(() => {
-//         clearInterval(interval);
-//         ghost.visible = true;
-//     }, 3000);
-// }
+    }, 2000);
+}
 

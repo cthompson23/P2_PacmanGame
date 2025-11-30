@@ -1,6 +1,6 @@
 import { pacman, tileSize, foods, tileMap, ghosts } from "./board.js";
 import { killPacman } from "./death.js"; 
-import { activateWeakMode } from "./ghosts.js";
+import { activateWeakMode, killGhost } from "./ghosts.js";
 
 export async function PacmanMovement(moves) {
   /**
@@ -133,6 +133,7 @@ function checkGhostCollision() {
 
        if (overlapX && overlapY) {            
             if (ghost.weak) {
+                killGhost(ghost);  
                 return false;
             }            
             return true;
