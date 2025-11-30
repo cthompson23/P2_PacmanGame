@@ -1,4 +1,8 @@
 import { tileMap } from "../scripts/board.js";
+import SeedLogger from "./seedLogs.js";
+import { mulberry32 } from "./RNG.js";
+export const RNG = mulberry32(123456789);
+
 
 const array_size = 100; //size of the array of moves
 const max_generations = 50; //maximum number of generations
@@ -13,7 +17,7 @@ const directions = [
 ];
 
 const inicial_array = Array.from({ length: array_size }, () => {
-  const randomIndex = Math.floor(Math.random() * move_opcions.length);
+  const randomIndex = Math.floor(RNG() * move_opcions.length);
   return move_opcions[randomIndex];
 }); // generates the initial array with random moves
 
@@ -173,7 +177,7 @@ class Population {
     this.population = Array.from({ length: this.size_population }, () => {
       //Creates a new random chromosome
       const randomChromosome = Array.from({ length: inicial_array.length }, () =>
-        inicial_array[Math.floor(Math.random() * inicial_array.length)]
+        inicial_array[Math.floor(RNG() * inicial_array.length)]
       );
       return new Individual(randomChromosome);
     });
@@ -184,7 +188,7 @@ class Population {
     const selected = [];
 
     for (let i = 0; i < tournamentSize; i++) {
-      const r = Math.floor(Math.random() * this.population.length);
+      const r = Math.floor(RNG() * this.population.length);
       selected.push(this.population[r]);
     }
 
@@ -220,7 +224,7 @@ class Population {
   crossover(parent1, parent2) {
     /*Creates a child individual by crossing over two parents*/
     
-    const crossoverPoint = Math.floor(Math.random() * parent1.cromosoma.length);
+    const crossoverPoint = Math.floor(RNG() * parent1.cromosoma.length);
     const childChromosome = [ parent1.cromosoma.slice(0, crossoverPoint)
                             , parent2.cromosoma.slice(crossoverPoint) ].flat();
     return new Individual(childChromosome);
@@ -229,8 +233,8 @@ class Population {
   mutate(individual, mutationRate) {
     /*Mutates an individual with a given mutation rate*/
     for (let i = 0; i < individual.cromosoma.length; i++) {
-      if (Math.random() < mutationRate) {
-        const newMove = move_opcions[Math.floor(Math.random() * move_opcions.length)];
+      if (RNG() < mutationRate) {
+        const newMove = move_opcions[Math.floor(RNG() * move_opcions.length)];
         individual.cromosoma[i] = newMove;
       }
     }
@@ -289,6 +293,17 @@ export function runAG() {
 
   population.evaluateAll(tileMap, pacmanStart);
 
+  // Seed metrics
+  const SEED_VALUE = RNG();
+  const logger = new SeedLogger(SEED_VALUE);
+  logger.setConfig({
+  populationSize: population_size,
+  generations: max_generations,
+  chromosomeLength: array_size,
+  mutationRate: mutation_rate,
+  tournamentK: 30
+  });
+
   console.log(" Generación 0");
   console.log(population.toString());
   console.log("Cromosomas iniciales:", population.toArrayPopu());
@@ -298,8 +313,16 @@ export function runAG() {
     population.newGeneraton();
     // Re-evaluar fitness
     population.evaluateAll(tileMap, pacmanStart);
-    console.log(`GENERACIÓN ${gen} `);
-    console.log(population.toString());
+    // console.log(`GENERACIÓN ${gen} `);
+    // console.log(population.toString());
+
+    // Seed metrics
+    const bestFitness = Math.max(...population.population.map(i => i.fitness));
+    const avgFitness = population.population.reduce((a, i) => a + i.fitness, 0) / population.population.length;  
+    const stdFitness = Math.sqrt(
+    population.population.map(i => (i.fitness - avgFitness) ** 2).reduce((a, b) => a + b, 0) / population.population.length);
+    // Guardar en el log
+    logger.logGeneration(gen, bestFitness, avgFitness, stdFitness);
   }
 
   console.log("Resultados de fitness:");
@@ -313,6 +336,10 @@ export function runAG() {
   console.log(" MEJOR INDIVIDUO FINAL");
   console.log("Fitness:", bestFinalInd.fitness);
   console.log("Cromosoma:", bestFinalInd.cromosoma);
+
+  logger.setFinalResult({best_individual: bestFinalInd.cromosoma,best_fitness: bestFinalInd.fitness,won: false });
+  console.log("SEED", RNG());
+  logger.exportJSON();
   // Saves the BEST genes found
   return bestFinalInd.cromosoma;
 }

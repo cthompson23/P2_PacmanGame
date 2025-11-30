@@ -1,5 +1,5 @@
 import { tileMap, foods, tileSize } from "./board.js";
-
+import { RNG } from "../algorithm/GeneticAlgorithm.js";
 export function createSuperPill() {
     /**
      * Selects a random food item from set and transforms it into a super pill     
@@ -9,7 +9,7 @@ export function createSuperPill() {
     if (foods.size === 0) return;
 
     const foodArray = Array.from(foods);
-    const randomIndex = Math.floor(Math.random() * foodArray.length);
+    const randomIndex = Math.floor(RNG() * foodArray.length);
     const superFood = foodArray[randomIndex];
 
     superFood.isSuper = true;

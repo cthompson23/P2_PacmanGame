@@ -1,4 +1,5 @@
-import { pacman, tileMap, tileSize, ghosts as ghostSet, ghosts } from "./board.js";
+import { pacman, tileMap, tileSize, ghosts as ghostSet } from "./board.js";
+import { RNG } from "../algorithm/GeneticAlgorithm.js";
 import { increaseScore } from "./PacManMoves.js";
 
 const eatGhostSound = new Audio("../resources/eatGhost.mp3");
@@ -35,7 +36,7 @@ export class Ghost {
          * @returns {string} A direction value: "U", "D", "L", or "R".
          */
         const dirs = ["U", "D", "L", "R"];
-        return dirs[Math.floor(Math.random() * dirs.length)];
+        return dirs[Math.floor(RNG() * dirs.length)];
     }
     randomSpeed() {
         /**
@@ -44,7 +45,7 @@ export class Ghost {
          * @returns {number} speed between 1-4
          */
         
-        return Math.floor(Math.random() * 4) + 1;
+        return Math.floor(RNG() * 4) + 1;
     }
 }
 
@@ -233,14 +234,14 @@ function updateGhost(ghost) {
         } 
         else {            
             // 50% de probabilidad para girar aleatoriamente
-            if (Math.random() < 0.50) {
+            if (RNG() < 0.50) {
                 const options = ["U","D","L","R"].filter(d => ghostCanMove(ghost, d));
                 if (options.length > 0) {
                     // Evitar girar hacia atrás 
                     const opposite = { U:"D", D:"U", L:"R", R:"L" }[ghost.direction];
                     const filtered = options.filter(o => o !== opposite);
                     const finalOptions = filtered.length ? filtered : options;
-                    ghost.direction = finalOptions[Math.floor(Math.random() * finalOptions.length)];
+                    ghost.direction = finalOptions[Math.floor(RNG() * finalOptions.length)];
                 }
             }
         }
@@ -248,7 +249,7 @@ function updateGhost(ghost) {
         if (!ghostCanMove(ghost, ghost.direction)) {
             const options = ["U","D","L","R"].filter(d => ghostCanMove(ghost, d));
             if (options.length > 0) {
-                ghost.direction = options[Math.floor(Math.random() * options.length)];
+                ghost.direction = options[Math.floor(RNG() * options.length)];
             }
         }
     }
@@ -292,7 +293,7 @@ export function activateWeakMode() {
             g.weak = false;
             g.image = g.originalImage;
         }
-    }, 30000);
+    }, 7000);
 }
 
 export function findRespawnPoint() {
