@@ -1,7 +1,8 @@
 import { tileMap } from "../scripts/board.js";
 import SeedLogger from "./seedLogs.js";
 import { mulberry32 } from "./RNG.js";
-export const RNG = mulberry32(123456789);
+let seed = 987654321;
+export const RNG = mulberry32(seed);
 
 
 const array_size = 100; //size of the array of moves
@@ -294,7 +295,7 @@ export function runAG() {
   population.evaluateAll(tileMap, pacmanStart);
 
   // Seed metrics
-  const SEED_VALUE = RNG();
+  const SEED_VALUE = seed;
   const logger = new SeedLogger(SEED_VALUE);
   logger.setConfig({
   populationSize: population_size,
@@ -338,7 +339,7 @@ export function runAG() {
   console.log("Cromosoma:", bestFinalInd.cromosoma);
 
   logger.setFinalResult({best_individual: bestFinalInd.cromosoma,best_fitness: bestFinalInd.fitness,won: false });
-  console.log("SEED", RNG());
+  console.log("SEED", seed);
   logger.exportJSON();
   // Saves the BEST genes found
   return bestFinalInd.cromosoma;
